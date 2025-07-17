@@ -12,6 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { navigationItems } from "@/lib/constants";
+import { NavAccounts } from "./nav-accounts";
 import { NavHeader } from "./nav-header";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -22,6 +23,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain navigationItems={navigationItems} />
+        <NavAccounts />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

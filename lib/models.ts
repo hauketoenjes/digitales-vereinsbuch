@@ -1,25 +1,36 @@
 import { RecordModel } from "pocketbase";
 
-export type Parish = RecordModel & {
+/**
+ * Represents an account in the system.
+ */
+export type Account = RecordModel & {
   name: string;
-  userIds: string[];
-  logo: string | null;
+  description: string | null;
+  ownerId: string;
   created: string;
   updated: string;
 };
 
-export type Acolyte = RecordModel & {
+/**
+ * Represents a booking belonging to an account.
+ */
+export type Booking = RecordModel & {
+  date: string;
+  amount: number;
+  description: string | null;
+  attachement: string | null;
+  accountId: string;
+  tagIds: string[];
+  created: string;
+  updated: string;
+};
+
+/**
+ * Represents a tag that can be associated with bookings.
+ */
+export type Tag = RecordModel & {
   name: string;
-  birthday: string;
-  parishId: string;
-  isInactive: boolean;
-  school: string | null;
-  address: string | null;
-  city: string | null;
-  postalCode: string | null;
-  parentName: string | null;
-  parentPhone: string | null;
-  parentEmail: string | null;
+  ownerId: string;
   created: string;
   updated: string;
 };
