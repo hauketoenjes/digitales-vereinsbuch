@@ -2,22 +2,22 @@ COMPOSE := docker compose
 
 .PHONY: build up down logs restart
 
-# Image bauen
+# Build the image
 build:
 	$(COMPOSE) build pocketbase
 
-# Container starten
+# Start the container
 up: build
 	$(COMPOSE) up -d pocketbase
 
-# Container stoppen
+# Stop the container
 down:
 	$(COMPOSE) down
 
-# Logs anzeigen (follow)
+# Show logs (follow mode)
 logs:
 	$(COMPOSE) logs -f pocketbase
 
-# Neustart des Pocketbase-Containers
+# Restart the Pocketbase container
 restart:
 	$(COMPOSE) restart pocketbase

@@ -1,0 +1,88 @@
+"use client";
+
+import { DeleteAccountDialog } from "@/components/dialogs/delete-account-dialog";
+import { UpsertAccountDialog } from "@/components/dialogs/upsert-account-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAccount } from "@/hooks/use-accounts";
+import { useBookings } from "@/hooks/use-bookings";
+import { cn } from "@/lib/utils";
+import { Pen, Trash } from "lucide-react";
+
+export function AccountHeader({ accountId }: { accountId: string }) {
+  const {
+    data: accountData,
+    isLoading: isLoadingAccount,
+    error,
+  } = useAccount(accountId);
+  const { data: bookingsData } = useBookings(accountId);
+
+  const currentBalance = bookingsData?.reduce(
+    (total, booking) => total + booking.amount,
+    0
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {isLoadingAccount ? (
+            <Skeleton className="w-32 h-4" />
+          ) : (
+            accountData?.name
+          )}
+        </CardTitle>
+        <CardDescription>
+          {isLoadingAccount ? (
+            <Skeleton className="mt-2 h-4 w-48" />
+          ) : (
+            accountData?.description || "Keine Beschreibung verfügbar"
+          )}
+        </CardDescription>
+        <CardAction>
+          <UpsertAccountDialog id={accountId}>
+            <Button variant="outline">
+              <Pen />
+              Konto bearbeiten
+            </Button>
+          </UpsertAccountDialog>
+          <span className="mx-2" />
+          <DeleteAccountDialog id={accountId}>
+            <Button variant="outline" size="icon">
+              <Trash />
+            </Button>
+          </DeleteAccountDialog>
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">Kontostand</p>
+        {isLoadingAccount ? (
+          <Skeleton className="mt-2 h-8 w-32" />
+        ) : (
+          <p
+            className={cn("text-xl font-semibold tabular-nums", {
+              "text-red-600": (currentBalance ?? 0) < 0,
+              "text-green-600": (currentBalance ?? 0) >= 0,
+            })}
+          >
+            {(currentBalance !== undefined ? currentBalance : 0).toLocaleString(
+              undefined,
+              {
+                style: "currency",
+                currency: "EUR",
+              }
+            )}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
