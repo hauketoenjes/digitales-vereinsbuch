@@ -1,5 +1,6 @@
 import useAuthStore from "@/hooks/use-auth-store";
 import { useBooking, useBookingMutation } from "@/hooks/use-bookings";
+import { useTags } from "@/hooks/use-tags";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Trash } from "lucide-react";
@@ -8,6 +9,7 @@ import { PropsWithChildren, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { MultiSelect } from "../multi-select-tags";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import {
@@ -50,6 +52,7 @@ export function UpsertBookingDialog({
 
   const { data } = useBooking(id);
   const { record: authRecord } = useAuthStore();
+  const { data: tagData } = useTags();
 
   const createBooking = useBookingMutation("create");
   const updateBooking = useBookingMutation("update");
@@ -308,6 +311,30 @@ export function UpsertBookingDialog({
                         </p>
                       )}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tagIds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        options={
+                          tagData?.map((tag) => ({
+                            label: tag.name,
+                            value: tag.id,
+                          })) ?? []
+                        }
+                        placeholder="Tags auswählen"
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
