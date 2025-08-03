@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Trash } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -31,6 +31,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { Textarea } from "../ui/textarea";
 
 export function UpsertBookingDialog({
@@ -40,7 +41,8 @@ export function UpsertBookingDialog({
 }: PropsWithChildren<{ id: string | null; accountId: string }>) {
   const formSchema = z.object({
     date: z.date(),
-    amount: z.number(),
+    mode: z.enum(["expense", "income"]),
+    amount: z.number().min(0, "Betrag muss positiv sein"),
     description: z.string().optional(),
     tagIds: z.array(z.string()).optional(),
     attachment: z.instanceof(File).nullable().optional(),
@@ -48,6 +50,7 @@ export function UpsertBookingDialog({
 
   const [open, setOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const today = useMemo(() => new Date(), []);
 
   const { data } = useBooking(id);
   const { record: authRecord } = useAuthStore();
@@ -59,8 +62,10 @@ export function UpsertBookingDialog({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
-      date: data?.date ? new Date(data.date) : new Date(),
-      amount: data?.amount ?? 0,
+      date: data?.date ? new Date(data.date) : today,
+      mode:
+        data?.amount !== undefined && data.amount > 0 ? "income" : "expense",
+      amount: Math.abs(data?.amount ?? 0),
       description: data?.description ?? "",
       tagIds: data?.tagIds ?? [],
       attachment: data?.attachment
@@ -77,7 +82,7 @@ export function UpsertBookingDialog({
         await updateBooking.mutateAsync({
           id,
           description: values.description,
-          amount: values.amount,
+          amount: values.amount * (values.mode === "expense" ? -1 : 1),
           date: values.date.toISOString(),
           tagIds: values.tagIds,
           attachment: values.attachment,
@@ -87,7 +92,7 @@ export function UpsertBookingDialog({
           accountId,
           ownerId: authRecord?.id ?? "",
           description: values.description,
-          amount: values.amount,
+          amount: values.amount * (values.mode === "expense" ? -1 : 1),
           date: values.date.toISOString(),
           tagIds: values.tagIds,
           attachment: values.attachment,
@@ -136,6 +141,28 @@ export function UpsertBookingDialog({
             <div className="grid gap-6">
               <FormField
                 control={form.control}
+                name="mode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Tabs
+                        value={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value as "expense" | "income");
+                        }}
+                      >
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="expense">Ausgabe</TabsTrigger>
+                          <TabsTrigger value="income">Einnahme</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
@@ -143,25 +170,19 @@ export function UpsertBookingDialog({
                     <FormControl>
                       <div className="relative">
                         <Input
-                          type="text"
+                          type="number"
                           inputMode="decimal"
-                          pattern="^-?[0-9]+([.,][0-9]{1,2})?$"
-                          placeholder="0,00"
-                          defaultValue={
-                            field.value !== undefined
-                              ? field.value.toLocaleString("de-DE", {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })
-                              : ""
-                          }
-                          onBlur={(e) => {
-                            const raw = e.currentTarget.value.replace(",", ".");
-                            const num = parseFloat(raw);
-                            field.onChange(isNaN(num) ? 0 : num);
-                          }}
+                          step={0.01}
                           disabled={isSubmitting}
-                          className="w-full pr-10 border bg-background px-3 py-2"
+                          min={0}
+                          className="w-full border bg-background pl-3 pr-6 py-2"
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "" || !isNaN(Number(value))) {
+                              field.onChange(parseFloat(value));
+                            }
+                          }}
                         />
                         <span className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                           €

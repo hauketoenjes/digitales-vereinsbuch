@@ -8,6 +8,7 @@ import {
   getSortedRowModel,
   OnChangeFn,
   SortingState,
+  TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -27,6 +28,7 @@ interface DataTableProps<TData> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[];
   data: TData[];
+  options?: Omit<TableOptions<TData>, "data" | "columns" | "getCoreRowModel">;
 }
 
 const sortingStateSchema = z.array(
@@ -36,7 +38,11 @@ const sortingStateSchema = z.array(
   })
 );
 
-export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
+export function DataTable<TData>({
+  columns,
+  data,
+  options,
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = useQueryState<SortingState>(
     "sorting",
     parseAsJson(sortingStateSchema.parse)
@@ -49,8 +55,10 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting as OnChangeFn<SortingState>,
     getSortedRowModel: getSortedRowModel(),
+    ...options,
     state: {
       sorting: sorting ?? undefined,
+      ...options?.state,
     },
   });
 

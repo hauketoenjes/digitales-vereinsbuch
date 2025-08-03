@@ -2,7 +2,7 @@ import useAuthStore from "@/hooks/use-auth-store";
 import { useTag, useTagMutation } from "@/hooks/use-tags";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -29,16 +29,13 @@ import { Input } from "../ui/input";
 export function UpsertTagDialog({
   id,
   children,
-  open,
-  setOpen,
 }: PropsWithChildren<{
   id: string | null;
-  open?: boolean;
-  setOpen?: (value: boolean) => void;
 }>) {
   const formSchema = z.object({
     name: z.string().min(1, "Name ist erforderlich"),
   });
+  const [open, setOpen] = useState<boolean>(false);
 
   const { data } = useTag(id);
   const { record: authRecord } = useAuthStore();

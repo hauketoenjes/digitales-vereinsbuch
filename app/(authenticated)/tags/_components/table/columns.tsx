@@ -1,4 +1,3 @@
-import { getCheckBoxColumn } from "@/components/data-table/checkbox-column";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Tag } from "@/lib/models";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -8,7 +7,6 @@ const columnHelper = createColumnHelper<Tag>();
 
 export function useTagsColumns() {
   return [
-    getCheckBoxColumn<Tag>(),
     columnHelper.accessor("name", {
       header: (ctx) => (
         <DataTableColumnHeader column={ctx.column} title={"Name"} />

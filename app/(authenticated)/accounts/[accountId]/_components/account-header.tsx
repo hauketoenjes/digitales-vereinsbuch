@@ -2,6 +2,7 @@
 
 import { DeleteAccountDialog } from "@/components/dialogs/delete-account-dialog";
 import { UpsertAccountDialog } from "@/components/dialogs/upsert-account-dialog";
+import { UpsertBookingDialog } from "@/components/dialogs/upsert-booking-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -44,19 +45,20 @@ export function AccountHeader({ accountId }: { accountId: string }) {
             accountData?.description || "Keine Beschreibung verfügbar"
           )}
         </CardDescription>
-        <CardAction>
+        <CardAction className="flex items-center space-x-2">
           <UpsertAccountDialog id={accountId}>
-            <Button variant="outline">
+            <Button variant="outline" size="icon">
               <Pen />
-              Konto bearbeiten
             </Button>
           </UpsertAccountDialog>
-          <span className="mx-2" />
           <DeleteAccountDialog id={accountId}>
             <Button variant="outline" size="icon">
               <Trash />
             </Button>
           </DeleteAccountDialog>
+          <UpsertBookingDialog id={null} accountId={accountId}>
+            <Button>Neue Buchung</Button>
+          </UpsertBookingDialog>
         </CardAction>
       </CardHeader>
       <CardContent>

@@ -1,4 +1,3 @@
-import { getCheckBoxColumn } from "@/components/data-table/checkbox-column";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 import { useTags } from "@/hooks/use-tags";
@@ -14,7 +13,6 @@ export function useBookingsColumns() {
   const { data: tagsData, isLoading: isLoadingTags } = useTags();
 
   return [
-    getCheckBoxColumn<Booking>(),
     columnHelper.accessor("amount", {
       header: (ctx) => (
         <DataTableColumnHeader column={ctx.column} title={"Betrag"} />
