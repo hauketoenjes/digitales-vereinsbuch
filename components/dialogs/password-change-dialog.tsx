@@ -29,8 +29,12 @@ import { z } from "zod";
 const formSchema = z
   .object({
     oldPassword: z.string(),
-    password: z.string(),
-    passwordConfirm: z.string(),
+    password: z.string().min(8, {
+      message: "Das Passwort muss mindestens 8 Zeichen lang sein",
+    }),
+    passwordConfirm: z.string().min(8, {
+      message: "Das Passwort muss mindestens 8 Zeichen lang sein",
+    }),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "Passwörter stimmen nicht überein",
@@ -87,7 +91,7 @@ export function PasswordChangeDialog({ children }: PropsWithChildren) {
               <DialogTitle>Passwort ändern</DialogTitle>
               <DialogDescription>
                 Um dein Passwort zu ändern, gib dein altes und neues Passwort
-                ein.
+                ein. Das Passwort muss mindestens 8 Zeichen lang sein.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6">
