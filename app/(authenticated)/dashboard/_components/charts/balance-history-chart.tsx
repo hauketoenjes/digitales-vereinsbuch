@@ -155,60 +155,66 @@ export function BalanceHistoryChart() {
         </CardAction>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
-        >
-          <LineChart data={filteredData} margin={{ left: 40 }}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return date.toLocaleDateString(undefined, {
-                  month: "short",
-                  day: "numeric",
-                });
-              }}
-            />
-            <YAxis
-              tickFormatter={(value) =>
-                value.toLocaleString(undefined, {
-                  style: "currency",
-                  currency: "EUR",
-                })
-              }
-            />
-            <ChartTooltip
-              cursor={false}
-              defaultIndex={isMobile ? -1 : 10}
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                    });
-                  }}
-                />
-              }
-            />
-            {accountsData?.map((account, idx) => (
-              <Line
-                key={account.id}
-                dataKey={account.id}
-                type="monotone"
-                stroke={`var(--chart-${idx + 1})`}
-                dot={false}
+        {filteredData.length < 1 ? (
+          <div className="text-center text-muted-foreground">
+            Keine Daten für den gewählten Zeitraum vorhanden.
+          </div>
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-[250px] w-full"
+          >
+            <LineChart data={filteredData} margin={{ left: 40 }}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return date.toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  });
+                }}
               />
-            ))}
-            <ChartLegend content={<ChartLegendContent />} />
-          </LineChart>
-        </ChartContainer>
+              <YAxis
+                tickFormatter={(value) =>
+                  value.toLocaleString(undefined, {
+                    style: "currency",
+                    currency: "EUR",
+                  })
+                }
+              />
+              <ChartTooltip
+                cursor={false}
+                defaultIndex={isMobile ? -1 : 10}
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) => {
+                      return new Date(value).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    }}
+                  />
+                }
+              />
+              {accountsData?.map((account, idx) => (
+                <Line
+                  key={account.id}
+                  dataKey={account.id}
+                  type="monotone"
+                  stroke={`var(--chart-${idx + 1})`}
+                  dot={false}
+                />
+              ))}
+              <ChartLegend content={<ChartLegendContent />} />
+            </LineChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );
