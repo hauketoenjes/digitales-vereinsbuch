@@ -44,7 +44,6 @@ export function UpsertBookingDialog({
     description: z.string().optional(),
     tagIds: z.array(z.string()).optional(),
     attachment: z.instanceof(File).nullable().optional(),
-    // TODO: Add the rest
   });
 
   const [open, setOpen] = useState(false);
