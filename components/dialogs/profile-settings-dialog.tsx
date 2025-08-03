@@ -60,6 +60,9 @@ export function ProfileSettingsDialog({ children }: PropsWithChildren) {
         .collection("users")
         .update(record.id, values);
       await pb.collection("users").authRefresh();
+      document.cookie = pb.authStore.exportToCookie({
+        httpOnly: false,
+      });
       toast.success("Account aktualisiert");
       form.reset({ name: updatedRecord.name, avatar: undefined });
       setOpen(false);

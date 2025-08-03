@@ -7,6 +7,7 @@ import {
   Monitor,
   Moon,
   Sun,
+  Trash,
   UserPen,
 } from "lucide-react";
 
@@ -35,6 +36,7 @@ import { pb } from "@/lib/pocketbase-client";
 import nameInitials from "name-initials";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { DeleteProfileDialog } from "./dialogs/delete-profile-dialog";
 import { PasswordChangeDialog } from "./dialogs/password-change-dialog";
 import { ProfileSettingsDialog } from "./dialogs/profile-settings-dialog";
 
@@ -106,6 +108,12 @@ export function NavUser() {
                   Passwort ändern
                 </DropdownMenuItem>
               </PasswordChangeDialog>
+              <DeleteProfileDialog>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <Trash />
+                  Account löschen
+                </DropdownMenuItem>
+              </DeleteProfileDialog>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuSub>
