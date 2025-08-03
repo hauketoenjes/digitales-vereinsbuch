@@ -18,11 +18,8 @@ import { cn } from "@/lib/utils";
 import { Pen, Trash } from "lucide-react";
 
 export function AccountHeader({ accountId }: { accountId: string }) {
-  const {
-    data: accountData,
-    isLoading: isLoadingAccount,
-    error,
-  } = useAccount(accountId);
+  const { data: accountData, isLoading: isLoadingAccount } =
+    useAccount(accountId);
   const { data: bookingsData } = useBookings(accountId);
 
   const currentBalance = bookingsData?.reduce(
@@ -31,7 +28,7 @@ export function AccountHeader({ accountId }: { accountId: string }) {
   );
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <CardTitle>
           {isLoadingAccount ? (

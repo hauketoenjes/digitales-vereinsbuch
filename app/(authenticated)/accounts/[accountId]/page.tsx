@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { use, useRef } from "react";
 import { toast } from "sonner";
 import { AccountHeader } from "./_components/account-header";
+import { BookingsTable } from "./_components/table/bookings-table";
 
 export default function Page({
   params,
@@ -27,5 +28,10 @@ export default function Page({
     );
   }
 
-  return <AccountHeader accountId={accountId} />;
+  return (
+    <div className="space-y-12">
+      <AccountHeader accountId={accountId} />
+      <BookingsTable accountId={accountId} />
+    </div>
+  );
 }

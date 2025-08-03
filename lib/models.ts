@@ -18,7 +18,7 @@ export type Booking = RecordModel & {
   date: string;
   amount: number;
   description: string | null;
-  attachement: string | null;
+  attachment: string | null;
   accountId: string;
   tagIds: string[];
   created: string;
