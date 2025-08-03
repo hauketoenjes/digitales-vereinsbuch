@@ -9,5 +9,7 @@ services:
     ports:
       - "8090:8090"
     volumes:
-      - ./pocketbase:/app/pocketbase
+      - ./pocketbase/pb_data:/app/pocketbase/pb_data
+      - ./pocketbase/pb_hooks:/app/pocketbase/pb_hooks
+      - ./pocketbase/pb_migrations:/app/pocketbase/pb_migrations
     restart: unless-stopped
