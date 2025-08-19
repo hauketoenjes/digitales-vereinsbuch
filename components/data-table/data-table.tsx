@@ -2,8 +2,10 @@
 
 import {
   ColumnDef,
+  FilterFn,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   OnChangeFn,
@@ -29,6 +31,9 @@ interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
   options?: Omit<TableOptions<TData>, "data" | "columns" | "getCoreRowModel">;
+  globalFilter?: string;
+  onGlobalFilterChange?: (updater: string | ((old: string) => string)) => void;
+  globalFilterFn?: FilterFn<TData>;
 }
 
 const sortingStateSchema = z.array(
@@ -42,6 +47,9 @@ export function DataTable<TData>({
   columns,
   data,
   options,
+  globalFilter,
+  onGlobalFilterChange,
+  globalFilterFn,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useQueryState<SortingState>(
     "sorting",
@@ -52,12 +60,16 @@ export function DataTable<TData>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting as OnChangeFn<SortingState>,
     getSortedRowModel: getSortedRowModel(),
+    onGlobalFilterChange,
+    globalFilterFn,
     ...options,
     state: {
       sorting: sorting ?? undefined,
+      globalFilter,
       ...options?.state,
     },
   });

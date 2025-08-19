@@ -75,19 +75,31 @@ export function UpsertBookingDialog({
     },
   });
 
-  const { isSubmitting, isDirty } = form.formState;
+  const { isSubmitting, isDirty, dirtyFields } = form.formState;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (id) {
-        await updateBooking.mutateAsync({
+        const updatePayload: {
+          id: string;
+          description?: string;
+          amount: number;
+          date: string;
+          tagIds?: string[];
+          attachment?: File | null;
+        } = {
           id,
           description: values.description,
           amount: values.amount * (values.mode === "expense" ? -1 : 1),
           date: values.date.toISOString(),
           tagIds: values.tagIds,
-          attachment: values.attachment,
-        });
+        };
+
+        if (dirtyFields?.attachment) {
+          updatePayload.attachment = values.attachment ?? null;
+        }
+
+        await updateBooking.mutateAsync(updatePayload);
       } else {
         await createBooking.mutateAsync({
           accountId,

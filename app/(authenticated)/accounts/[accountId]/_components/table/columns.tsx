@@ -30,12 +30,14 @@ export function useBookingsColumns() {
           })}
         </p>
       ),
+      filterFn: "includesString",
     }),
     columnHelper.accessor("description", {
       header: (ctx) => (
         <DataTableColumnHeader column={ctx.column} title={"Beschreibung"} />
       ),
       cell: (info) => <p className="line-clamp-1">{info.getValue() || "-"}</p>,
+      filterFn: "includesString",
     }),
     columnHelper.accessor("date", {
       header: (ctx) => (
@@ -58,10 +60,12 @@ export function useBookingsColumns() {
           </p>
         </div>
       ),
+      filterFn: "includesString",
     }),
 
     columnHelper.accessor("tagIds", {
       enableSorting: false,
+      enableGlobalFilter: true,
       enableHiding: false,
       header: (ctx) => (
         <DataTableColumnHeader column={ctx.column} title={"Tags"} />
@@ -82,6 +86,16 @@ export function useBookingsColumns() {
             })}
           </div>
         );
+      },
+      filterFn: (row, columnId, filterValue) => {
+        const tagIds = row.getValue(columnId) as string[];
+        if (!filterValue) return true;
+        return tagIds?.some((tagId) => {
+          const tag = tagsData?.find((t) => t.id === tagId);
+          return (tag?.name ?? "")
+            .toLowerCase()
+            .includes(String(filterValue).toLowerCase());
+        });
       },
     }),
     columnHelper.accessor("attachment", {
