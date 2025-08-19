@@ -87,11 +87,11 @@ routerAdd("POST", "/pdf-gen", async (e) => {
       });
     }
 
-    const bookings = await $app.findRecordsByFilter(
+    const bookings = $app.findRecordsByFilter(
       "bookings",
       `date >= {:fromDate} && date <= {:toDate} && accountId.ownerId = {:userId} && accountId = {:accountId}`,
       "date",
-      100_000,
+      100000,
       0,
       {
         fromDate: requestData.fromDate,
@@ -126,6 +126,44 @@ routerAdd("POST", "/pdf-gen", async (e) => {
     const pageSize = [595.28, 841.89]; // A4 size (points)
     const fontSize = 12;
     const now = formatDateGerman(new Date());
+
+    // Add cover page
+    const account = $app.findRecordById("accounts", requestData.accountId);
+    console.log("Account:", account);
+    const accountName = account?.getString("name") || "Unbekanntes Konto";
+
+    const coverPage = pdfDoc.addPage(pageSize);
+    const { width: cw, height: ch } = coverPage.getSize();
+    coverPage.drawText("PDF-Report", {
+      x: 50,
+      y: ch - 100,
+      size: 26,
+      font: helveticaBoldFont,
+      color: rgb(0.15, 0.32, 0.48),
+    });
+    coverPage.drawText(`Konto: ${accountName}`, {
+      x: 50,
+      y: ch - 150,
+      size: 18,
+      font: helveticaFont,
+    });
+    coverPage.drawText(`Erstellt am: ${now}`, {
+      x: 50,
+      y: ch - 180,
+      size: 14,
+      font: helveticaObliqueFont,
+    });
+    coverPage.drawText(
+      `Zeitraum: ${formatDateGerman(
+        requestData.fromDate
+      )} bis ${formatDateGerman(requestData.toDate)}`,
+      {
+        x: 50,
+        y: ch - 210,
+        size: 14,
+        font: helveticaFont,
+      }
+    );
 
     // Group bookings by date
     const bookingsByDate = {};

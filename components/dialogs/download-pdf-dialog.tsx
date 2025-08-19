@@ -6,6 +6,7 @@ import { PropsWithChildren, useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { toast } from "sonner";
 
+import { useBookings } from "@/hooks/use-bookings";
 import { pocketbaseUrl } from "@/lib/constants";
 import { pb } from "@/lib/pocketbase-client";
 import { Button, buttonVariants } from "../ui/button";
@@ -26,6 +27,14 @@ export function DownloadPdfDialog({
 }: PropsWithChildren<{
   accountId: string | null;
 }>) {
+  const { data: bookingsData } = useBookings(accountId);
+
+  // Derive array of booking dates as Date objects
+  const bookingDates = useMemo(() => {
+    if (!bookingsData) return [];
+    return bookingsData.map((b) => new Date(b.date));
+  }, [bookingsData]);
+
   const [open, setOpen] = useState(false);
   const [range, setRange] = useState<DateRange | undefined>({
     from: undefined,
@@ -108,8 +117,28 @@ export function DownloadPdfDialog({
               mode="range"
               numberOfMonths={2}
               selected={range}
-              onSelect={setRange}
+              onSelect={(selected) => {
+                if (!selected) {
+                  setRange(undefined);
+                  return;
+                }
+                const { from, to } = selected;
+                let normalizedFrom = from ? new Date(from) : undefined;
+                let normalizedTo = to ? new Date(to) : undefined;
+                if (normalizedFrom) {
+                  normalizedFrom.setHours(0, 0, 0, 0);
+                }
+                if (normalizedTo) {
+                  normalizedTo.setHours(23, 59, 59, 999);
+                }
+                setRange({ from: normalizedFrom, to: normalizedTo });
+              }}
               initialFocus
+              modifiers={{ booked: bookingDates }}
+              modifiersClassNames={{
+                booked:
+                  "relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:rounded-full after:bg-green-500",
+              }}
             />
           </div>
         </div>
