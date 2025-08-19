@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Clubbook
+
+A digital accounting system for treasurers in German clubs.
+
+## Tech Stack
+
+- **Frontend:** Next.js with shadcn/ui and Tailwind CSS for a modern and responsive user interface.
+- **Backend:** Pocketbase as a lightweight backend solution for data management and authentication.
+
+## Features
+
+The project includes the following six epics with their respective goals:
+
+1. **User Management:** Managing user accounts, roles, and permissions.
+2. **Booking Management:** Recording and managing bookings and transactions.
+3. **Receipt Upload:** Uploading and managing receipts for bookings.
+4. **Dashboard:** Clear presentation of financial data and statistics.
+5. **PDF Export:** Exporting booking data and reports as PDF.
+6. **Search & Usability:** Efficient search functions and user-friendly operation.
 
 ## Getting Started
 
-First, run the development server:
+### Frontend
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Install dependencies:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   pnpm install
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Start development server (runs on port 3000):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   pnpm dev
+   ```
 
-## Learn More
+### Backend
 
-To learn more about Next.js, take a look at the following resources:
+The following Makefile commands are available:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Start build:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  ```bash
+  make build
+  ```
 
-## Deploy on Vercel
+- Start backend:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  ```bash
+  make up
+  ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Stop backend:
+
+  ```bash
+  make down
+  ```
+
+- Show logs:
+
+  ```bash
+  make logs
+  ```
+
+- Restart backend:
+
+  ```bash
+  make restart
+  ```
+
+## Deployment
+
+The system can be self-hosted, either with Docker or in a secure cloud environment.
