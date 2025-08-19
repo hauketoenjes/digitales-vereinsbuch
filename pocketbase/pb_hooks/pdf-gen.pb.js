@@ -1,7 +1,6 @@
 /// <reference path="../pb_data/types.d.ts" />
 
-// register "GET /hello/{name}" route (allowed for everyone)
-routerAdd("GET", "/pdf-gen", async (e) => {
+routerAdd("POST", "/pdf-gen", async (e) => {
   if (!e.auth) {
     return e.json(401, { error: "Unauthorized" });
   }

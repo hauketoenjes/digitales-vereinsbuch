@@ -50,6 +50,7 @@ export function UpsertBookingDialog({
 
   const [open, setOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const today = useMemo(() => new Date(), []);
 
   const { data } = useBooking(id);
@@ -309,14 +310,19 @@ export function UpsertBookingDialog({
                       </Button>
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant={confirmDelete ? "destructive" : "ghost"}
                         size="icon"
                         className="min-w-9"
                         onClick={(e) => {
                           e.preventDefault();
-                          form.setValue("attachment", null, {
-                            shouldDirty: true,
-                          });
+                          if (!confirmDelete) {
+                            setConfirmDelete(true);
+                          } else {
+                            form.setValue("attachment", null, {
+                              shouldDirty: true,
+                            });
+                            setConfirmDelete(false);
+                          }
                         }}
                       >
                         <Trash />

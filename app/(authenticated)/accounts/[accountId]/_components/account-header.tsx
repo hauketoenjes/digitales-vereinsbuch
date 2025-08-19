@@ -1,6 +1,7 @@
 "use client";
 
 import { DeleteAccountDialog } from "@/components/dialogs/delete-account-dialog";
+import { DownloadPdfDialog } from "@/components/dialogs/download-pdf-dialog";
 import { UpsertAccountDialog } from "@/components/dialogs/upsert-account-dialog";
 import { UpsertBookingDialog } from "@/components/dialogs/upsert-booking-dialog";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAccount } from "@/hooks/use-accounts";
 import { useBookings } from "@/hooks/use-bookings";
 import { cn } from "@/lib/utils";
-import { Pen, Trash } from "lucide-react";
+import { Download, Pen, Trash } from "lucide-react";
 
 export function AccountHeader({ accountId }: { accountId: string }) {
   const { data: accountData, isLoading: isLoadingAccount } =
@@ -56,6 +57,11 @@ export function AccountHeader({ accountId }: { accountId: string }) {
               <Trash />
             </Button>
           </DeleteAccountDialog>
+          <DownloadPdfDialog accountId={accountId}>
+            <Button variant="outline" size="icon">
+              <Download />
+            </Button>
+          </DownloadPdfDialog>
           <UpsertBookingDialog id={null} accountId={accountId}>
             <Button>Neue Buchung</Button>
           </UpsertBookingDialog>
